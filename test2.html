@@ -8,13 +8,13 @@
 <body>
 	<script>
 		var oDPAPI;
+		var sConfigurationId,sTransactionId,sButtonDivId = "payment_buttons";
 		
 		function loadAPI() {
 			var sLoaderUrl = $("#LoaderUrl").val(); 
 			var sAPISessionId = $("#APISessionId").val();
-			var sConfigurationId = $("#ConfigId").val();
-			var sTransactionId = $("#TransactionId").val();
-			var sButtonDivId = "payment_buttons";
+			sConfigurationId = $("#ConfigId").val();
+			sTransactionId = $("#TransactionId").val();
 			
 			var script = document.createElement('script');
 			script.onload = function() {
@@ -38,7 +38,8 @@
 
 			oPaymentTypesPromise.then(function(aPaymentTypes) { 
 				aPaymentTypes.forEach(function(oPaymentType) {
-					makeRadioButton(oPaymentType.PaymentType, PaymentType.Name);
+					var radioButton = makeRadioButton(oPaymentType.PaymentType, PaymentType.Name);
+					document.getElementById("payment_types").appendChild(radioButton);
 				});
 			}).catch(function(oError) {
 				/* A technical error has occurred, 
@@ -67,7 +68,7 @@
 			radio.addEventListener('change', onPaymentTypeSelected);
 			label.appendChild(radio);
 			label.appendChild(document.createTextNode(sText));
-			document.getElementById("payment_types").appendChild(label);
+			return label;
 		}
 	</script>
 
