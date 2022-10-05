@@ -36,11 +36,8 @@
 		function getPaymentTypes() {
 			var oPaymentTypesPromise = oDPAPI.loadPaymentTypes(sConfigurationId, sTransactionId, sButtonDivId);
 
-			oPaymentTypesPromise.then(function(aPaymentTypes) { 
-				aPaymentTypes.forEach(function(oPaymentType) {
-					var radioButton = makeRadioButton(oPaymentType.PaymentType, oPaymentType.Name);
-					document.getElementById("payment_types").appendChild(radioButton);
-				});
+			oPaymentTypesPromise.then(function(aPaymentTypes) {
+				makeRadioButtons(aPaymentTypes);
 			}).catch(function(oError) {
 				handleError(oError);
 			});
@@ -51,10 +48,24 @@
 			var oPaymentPromise = oDPAPI.selectPaymentType(sPaymentType);
 			
 			oPaymentPromise.then(function(sTransactionByPaytSrvcPrvdr) {
-					console.log(`Inform backend to call /core/v2/paymentpage/finalize to finalize transaction. Payment Id at PSP: ${sTransactionByPaytSrvcPrvdr}`);
-				}).catch(function(oError) { 
-					handleError(oError);
-				});
+				console.log(`Inform backend to call /core/v2/paymentpage/finalize to finalize transaction. Payment Id at PSP: ${sTransactionByPaytSrvcPrvdr}`);
+			}).catch(function(oError) { 
+				handleError(oError);
+			});
+		}
+		
+
+		function makeRadioButtons(aPaymentTypes) {
+			aPaymentTypes.forEach(function(oPaymentType) {
+				var label = document.createElement("label"), radio = document.createElement("input");
+				radio.type = "radio";
+				radio.name = "paymentTypes";
+				radio.value = oPaymentType.Type;
+				radio.addEventListener('change', onPaymentTypeSelected);
+				label.appendChild(radio);
+				label.appendChild(document.createTextNode(oPaymentType.Name));
+				document.getElementById("payment_types").appendChild(label);
+			});
 		}
 		
 		function handleError(oError) {
@@ -67,17 +78,6 @@
 			if (oError && oError.ErrorConsumer) {
 				console.log(oError.ErrorConsumer.ErrorId);
 			}
-		}
-		
-		function makeRadioButton(sType, sText) {
-			var label = document.createElement("label"), radio = document.createElement("input");
-			radio.type = "radio";
-			radio.name = "paymentTypes";
-			radio.value = sType;
-			radio.addEventListener('change', onPaymentTypeSelected);
-			label.appendChild(radio);
-			label.appendChild(document.createTextNode(sText));
-			return label;
 		}
 	</script>
 
