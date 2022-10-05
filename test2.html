@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Payment Page</title>
+<script src="https://sapui5.hana.ondemand.com/1.96.10/resources/sap/ui/thirdparty/jquery.js"></script>
+</head>
+<body>
+	<script>
+		var oDPApi;
+		
+		function loadAPI() {
+			var sLoaderUrl = $("#LoaderUrl").val(); 
+			var sAPISessionId = $("#APISessionId").val();
+			var sConfigurationId = $("#ConfigId").val();
+			var sTransactionId = $("#TransactionId").val();
+			var sButtonDivId = "payment_buttons";
+			
+			var script = document.createElement('script');
+			script.onload = function() {
+				var oLoaderPromise = com.sap.fin.digital.payments.jslib.Loader.initLibrary(sAPISessionId);
+				oLoaderPromise.then(function(oDPApi) {
+					oDPApi = oDPApi;
+					console.log("DPJSLib API loaded successfully!");
+					getPaymentTypes();
+				}).catch(function(oError) {
+						alert("error");
+				});
+			};
+			script.id = "com.sap.digital.payments.jslib.loader";
+			script.src = sLoaderUrl;
+			document.head.appendChild(script);
+		}
+
+		
+		function getPaymentTypes() {
+			var oPaymentTypesPromise = oDPApi.loadPaymentTypes(sConfigurationId, sTransactionId, sButtonDivId);
+
+			oPaymentTypesPromise.then(function(aPaymentTypes) { 
+				aPaymentTypes.forEach(function(oPaymentType) {
+					makeRadioButton(oPaymentType.PaymentType, PaymentType.Name);
+				});
+			}).catch(function(oError) {
+				/* A technical error has occurred, 
+				which prevented the payment types from loading. */
+			});
+		}
+		
+		function onPaymentTypeSelected(oEvent) {
+			var sPaymentType = oEvent.getSelection();
+			var oPaymentPromise = oDPApi.selectPaymentType(sPaymentType);
+			
+			oPaymentPromise.then(function(sTransactionByPaytSrvcPrvdr) {
+					console.log(`Inform backend to call /core/v2/paymentpage/finalize to finalize Transaction ${sTransactionByPaytSrvcPrvdr}`);
+				}).catch(function(oError) { 
+				/* A technical error has occurred, 
+				 which prevented the authorization/payment to be completed. */
+				});
+		}
+		
+		function makeRadioButton(sType, sText) {
+			var label = document.createElement("label");
+			var radio = document.createElement("input");
+			radio.type = "radio";
+			radio.name = "paymentTypes";
+			radio.value = sType;
+			radio.addEventListener('change', onPaymentTypeSelected);
+			label.appendChild(radio);
+			label.appendChild(document.createTextNode(sText));
+			document.getElementById("payment_types").appendChild(label);
+		}
+	</script>
+
+
+	<br> LoaderUrl <input id="LoaderUrl" value="http://localhost:10000/dpjslib/latest/loader.min.js" size="100">
+	<br> APISessionId <input id="APISessionId" value="" size="100">
+	<br> <button onClick="loadAPI()">Load API</button>
+	<br>
+	<br>TransactionId <input id="TransactionId" value="" size="100">
+	<br>ConfigId <input id="ConfigId" value="config1" size="100">
+	<br>
+	<div id="payment_types"></div>
+	<div id="payment_buttons"></div>
+
+</body>
+</html>
