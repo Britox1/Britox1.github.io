@@ -11,7 +11,7 @@
 			sConfigurationId = document.getElementById("ConfigId").value;
 			sTransactionId = document.getElementById("TransactionId").value;
 			
-			var script = document.createElement('script');
+			var script = document.createElement("script");
 			script.onload = function() {
 				var oLoaderPromise = com.sap.fin.digital.payments.jslib.Loader.initLibrary(sAPISessionId);
 				oLoaderPromise.then(function(oAPI) {
@@ -44,6 +44,8 @@
 			
 			oPaymentPromise.then(function(sTransactionByPaytSrvcPrvdr) {
 				console.log(`Inform backend to call /core/v2/paymentpage/finalize to finalize transaction. Payment Id at PSP: ${sTransactionByPaytSrvcPrvdr}`);
+				document.getElementById("payment_types").remove();
+				document.getElementById(sButtonDivId).remove();
 			}).catch(function(oError) { 
 				handleError(oError);
 			});
@@ -56,7 +58,7 @@
 				radio.type = "radio";
 				radio.name = "paymentTypes";
 				radio.value = oPaymentType.PaymentType;
-				radio.addEventListener('change', onPaymentTypeSelected);
+				radio.addEventListener("change", onPaymentTypeSelected);
 				label.appendChild(radio);
 				label.appendChild(document.createTextNode(oPaymentType.Name));
 				document.getElementById("payment_types").appendChild(label);
@@ -66,21 +68,22 @@
 		function handleError(oError) {
 			if (!oError) {
 				console.log("unexpected error occurred");
+				return;
 			}
-			if (oError && oError.message) {
+			if (oError.message) {
 				console.log(oError.message);
 			}
-			if (oError && oError.ErrorConsumer) {
+			if (oError.ErrorConsumer) {
 				console.log(oError.ErrorConsumer.ErrorId);
 			}
 		}
 	</script>
 
 
-	<br> LoaderUrl <input id="LoaderUrl" value="http://localhost:10000/dpjslib/latest/loader.min.js" size="100">
+	<br> LoaderUrl <input id="LoaderUrl" value="" size="100">
 	<br> APISessionId <input id="APISessionId" value="" size="100">
-	<br>TransactionId <input id="TransactionId" value="" size="100">
-	<br>ConfigId <input id="ConfigId" value="config1" size="100">
+	<br> TransactionId <input id="TransactionId" value="" size="100">
+	<br> ConfigId <input id="ConfigId" value="" size="100">
 	<br>
 	<br><button onClick="loadAPI()">Load Payment Buttons</button><br>
 	<br><div id="payment_types"></div><br>
