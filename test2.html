@@ -30,7 +30,6 @@
 					if (oError && oError.ErrorConsumer) {
 						console.log(oError.ErrorConsumer.ErrorId);
 					}
-				
 				});
 			};
 			script.id = "com.sap.digital.payments.jslib.loader";
@@ -44,12 +43,16 @@
 
 			oPaymentTypesPromise.then(function(aPaymentTypes) { 
 				aPaymentTypes.forEach(function(oPaymentType) {
-					var radioButton = makeRadioButton(oPaymentType.PaymentType, PaymentType.Name);
+					var radioButton = makeRadioButton(oPaymentType.PaymentType, oPaymentType.Name);
 					document.getElementById("payment_types").appendChild(radioButton);
 				});
 			}).catch(function(oError) {
-				/* A technical error has occurred, 
-				which prevented the payment types from loading. */
+				if (oError && oError.message) {
+					console.log(oError.message);
+				}
+				if (oError && oError.ErrorConsumer) {
+					console.log(oError.ErrorConsumer.ErrorId);
+				}
 			});
 		}
 		
