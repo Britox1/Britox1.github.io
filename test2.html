@@ -24,7 +24,13 @@
 					console.log("DPJSLib API loaded successfully!");
 					getPaymentTypes();
 				}).catch(function(oError) {
-					console.log(oError && oError.message);
+					if (oError && oError.message) {
+						console.log(oError.message);
+					}
+					if (oError && oError.ErrorConsumer) {
+						console.log(oError.ErrorConsumer.ErrorId);
+					}
+				
 				});
 			};
 			script.id = "com.sap.digital.payments.jslib.loader";
@@ -48,7 +54,7 @@
 		}
 		
 		function onPaymentTypeSelected(oEvent) {
-			var sPaymentType = oEvent.getSelection();
+			var sPaymentType = oEvent.srcElement.value;
 			var oPaymentPromise = oDPAPI.selectPaymentType(sPaymentType);
 			
 			oPaymentPromise.then(function(sTransactionByPaytSrvcPrvdr) {
@@ -60,8 +66,7 @@
 		}
 		
 		function makeRadioButton(sType, sText) {
-			var label = document.createElement("label");
-			var radio = document.createElement("input");
+			var label = document.createElement("label"), radio = document.createElement("input");
 			radio.type = "radio";
 			radio.name = "paymentTypes";
 			radio.value = sType;
