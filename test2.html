@@ -32,6 +32,7 @@
 			var oPaymentTypesPromise = oDPAPI.loadPaymentTypes(sConfigurationId, sTransactionId, sButtonDivId);
 
 			oPaymentTypesPromise.then(function(aPaymentTypes) {
+				/* e.g., add each payment type to a radio button group */
 				makeRadioButtons(aPaymentTypes);
 			}).catch(function(oError) {
 				handleError(oError);
@@ -43,9 +44,11 @@
 			var oPaymentPromise = oDPAPI.selectPaymentType(sPaymentType);
 			
 			oPaymentPromise.then(function(sTransactionByPaytSrvcPrvdr) {
-				console.log(`Inform backend to call /core/v2/paymentpage/finalize to finalize transaction. Payment Id at PSP: ${sTransactionByPaytSrvcPrvdr}`);
+				/* TransactionByPaytSrvcPrvdr is optional. If provided, you must add it to the request of the /core/v2/paymentpage/finalize call. */
+				console.log(`Payment Id at PSP: ${sTransactionByPaytSrvcPrvdr}`);
 				document.getElementById("payment_types").remove();
-				document.getElementById(sButtonDivId).remove();
+				document.getElementById("payment_buttons").remove();
+				document.getElementById("load_button").remove();
 			}).catch(function(oError) { 
 				handleError(oError);
 			});
@@ -85,7 +88,7 @@
 	<br> TransactionId <input id="TransactionId" value="" size="100">
 	<br> ConfigId <input id="ConfigId" value="" size="100">
 	<br>
-	<br><button onClick="loadAPI()">Load Payment Buttons</button><br>
+	<br><button id="load_button" onClick="loadAPI()">Load Payment Buttons</button><br>
 	<br><div id="payment_types"></div><br>
 	<br><div id="payment_buttons"></div><br>
 
