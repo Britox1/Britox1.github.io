@@ -7,7 +7,7 @@
 </head>
 <body>
 	<script>
-		var oDPApi;
+		var oDPAPI;
 		
 		function loadAPI() {
 			var sLoaderUrl = $("#LoaderUrl").val(); 
@@ -19,12 +19,12 @@
 			var script = document.createElement('script');
 			script.onload = function() {
 				var oLoaderPromise = com.sap.fin.digital.payments.jslib.Loader.initLibrary(sAPISessionId);
-				oLoaderPromise.then(function(oDPApi) {
-					oDPApi = oDPApi;
+				oLoaderPromise.then(function(oAPI) {
+					oDPAPI = oAPI;
 					console.log("DPJSLib API loaded successfully!");
 					getPaymentTypes();
 				}).catch(function(oError) {
-						alert("error");
+					console.log(oError && oError.message);
 				});
 			};
 			script.id = "com.sap.digital.payments.jslib.loader";
@@ -34,7 +34,7 @@
 
 		
 		function getPaymentTypes() {
-			var oPaymentTypesPromise = oDPApi.loadPaymentTypes(sConfigurationId, sTransactionId, sButtonDivId);
+			var oPaymentTypesPromise = oDPAPI.loadPaymentTypes(sConfigurationId, sTransactionId, sButtonDivId);
 
 			oPaymentTypesPromise.then(function(aPaymentTypes) { 
 				aPaymentTypes.forEach(function(oPaymentType) {
@@ -48,7 +48,7 @@
 		
 		function onPaymentTypeSelected(oEvent) {
 			var sPaymentType = oEvent.getSelection();
-			var oPaymentPromise = oDPApi.selectPaymentType(sPaymentType);
+			var oPaymentPromise = oDPAPI.selectPaymentType(sPaymentType);
 			
 			oPaymentPromise.then(function(sTransactionByPaytSrvcPrvdr) {
 					console.log(`Inform backend to call /core/v2/paymentpage/finalize to finalize Transaction ${sTransactionByPaytSrvcPrvdr}`);
@@ -74,10 +74,10 @@
 
 	<br> LoaderUrl <input id="LoaderUrl" value="http://localhost:10000/dpjslib/latest/loader.min.js" size="100">
 	<br> APISessionId <input id="APISessionId" value="" size="100">
-	<br> <button onClick="loadAPI()">Load API</button>
 	<br>
 	<br>TransactionId <input id="TransactionId" value="" size="100">
 	<br>ConfigId <input id="ConfigId" value="config1" size="100">
+	<br> <button onClick="loadAPI()">Load Payment Buttons</button>
 	<br>
 	<div id="payment_types"></div>
 	<div id="payment_buttons"></div>
