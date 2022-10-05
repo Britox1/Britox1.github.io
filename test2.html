@@ -2,13 +2,20 @@
 <html>
 <body>
 	<script>
-		var oDPAPI;
-		var sConfigurationId,sTransactionId,sButtonDivId = "payment_buttons";
+		var oDPAPI, sConfigurationId, sTransactionId;
 		
 		function loadAPI() {
+			/*holds the Loader URL (String), retrieved from backend (/core/v1/dpjslib/loader) */
 			var sLoaderUrl = document.getElementById("LoaderUrl").value;
+			
+			/*holds the API Session identifier (String), retrieved from backend (/core/v1/dpjslib/loader) */
 			var sAPISessionId = document.getElementById("APISessionId").value;
+			
+			/* holds the id of a payment page configuration (String)
+				see https://help.sap.com/docs/DIGITALPAYMENTS/d9dc52ba228e4552b13d3ff6b7f55c7f/4f1a6cd1b1d34b45b3781968b5351219.html?locale=en-US */
 			sConfigurationId = document.getElementById("ConfigId").value;
+			
+			/*holds the API Session identifier (String), retrieved from backend (/core/v2/paymentpage/initiate) */
 			sTransactionId = document.getElementById("TransactionId").value;
 			
 			var script = document.createElement("script");
@@ -29,7 +36,7 @@
 
 		
 		function getPaymentTypes() {
-			var oPaymentTypesPromise = oDPAPI.loadPaymentTypes(sConfigurationId, sTransactionId, sButtonDivId);
+			var oPaymentTypesPromise = oDPAPI.loadPaymentTypes(sConfigurationId, sTransactionId, "payment_buttons");
 
 			oPaymentTypesPromise.then(function(aPaymentTypes) {
 				/* e.g., add each payment type to a radio button group */
@@ -55,6 +62,7 @@
 		}
 		
 
+		/* example implementation of a radio button group for payment type selection */
 		function makeRadioButtons(aPaymentTypes) {
 			aPaymentTypes.forEach(function(oPaymentType) {
 				var label = document.createElement("label"), radio = document.createElement("input");
@@ -77,6 +85,7 @@
 				console.log(oError.message);
 			}
 			if (oError.ErrorConsumer) {
+				//see https://help.sap.com/docs/DIGITALPAYMENTS/77d227ce58fd4629b483a6ed10d6dbf9/2489b60fe9f84ca3b77f4f68a5933ef2.html?locale=en-US
 				console.log(oError.ErrorConsumer.ErrorId);
 			}
 		}
