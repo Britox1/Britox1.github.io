@@ -60,7 +60,7 @@
 				var label = document.createElement("label"), radio = document.createElement("input");
 				radio.type = "radio";
 				radio.name = "paymentTypes";
-				radio.value = oPaymentType.Type;
+				radio.value = oPaymentType.PaymentType;
 				radio.addEventListener('change', onPaymentTypeSelected);
 				label.appendChild(radio);
 				label.appendChild(document.createTextNode(oPaymentType.Name));
