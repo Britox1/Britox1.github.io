@@ -1,20 +1,15 @@
 <!doctype html>
 <html>
-<head>
-<meta charset="utf-8">
-<title>Payment Page</title>
-<script src="https://sapui5.hana.ondemand.com/1.96.10/resources/sap/ui/thirdparty/jquery.js"></script>
-</head>
 <body>
 	<script>
 		var oDPAPI;
 		var sConfigurationId,sTransactionId,sButtonDivId = "payment_buttons";
 		
 		function loadAPI() {
-			var sLoaderUrl = $("#LoaderUrl").val(); 
-			var sAPISessionId = $("#APISessionId").val();
-			sConfigurationId = $("#ConfigId").val();
-			sTransactionId = $("#TransactionId").val();
+			var sLoaderUrl = document.getElementById("LoaderUrl").value;
+			var sAPISessionId = document.getElementById("APISessionId").value;
+			sConfigurationId = document.getElementById("ConfigId").value;
+			sTransactionId = document.getElementById("TransactionId").value;
 			
 			var script = document.createElement('script');
 			script.onload = function() {
